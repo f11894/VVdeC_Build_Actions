@@ -17,18 +17,16 @@ jobs:
       shell: cmd
       run: |
         C:\msys64\usr\bin\bash -lc "pacman -S mingw-w64-x86_64-nasm mingw-w64-x86_64-yasm mingw-w64-x86_64-meson mingw-w64-x86_64-ninja --noconfirm"
-    - name: configure
+    - name: build
       shell: cmd
       run: |
         set MSYSTEM=MINGW64
         set HOME=${{ github.workspace }}
+        set CFLAGS=-flto -v
+        set CXXFLAGS=%CFLAGS%
+        set LDFLAGS=-static -static-libgcc -flto -s
         git clone --depth 1 -b ${{ matrix.branch }} https://github.com/fraunhoferhhi/vvdec
-        C:\msys64\usr\bin\bash -lc "cd vvdec && mkdir gcc_cmake && cd gcc_cmake && cmake .. -G Ninja -DCMAKE_C_FLAGS='-flto' -DCMAKE_CXX_FLAGS='-flto' -DCMAKE_EXE_LINKER_FLAGS='-static -static-libgcc -flto -s' -DCMAKE_BUILD_TYPE=Release"
-    - name: make
-      shell: cmd
-      run: |
-        set MSYSTEM=MINGW64
-        set HOME=${{ github.workspace }}
+        C:\msys64\usr\bin\bash -lc "cd vvdec && mkdir gcc_cmake && cd gcc_cmake && cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release"
         C:\msys64\usr\bin\bash -lc "cd vvdec/gcc_cmake && ninja"
         copy /y vvdec\bin\release-static\*.exe .\
         copy /y vvdec\LICENSE.txt LICENSE.txt
