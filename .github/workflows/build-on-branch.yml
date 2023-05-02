@@ -7,7 +7,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        branch: [v1.5.0]
+        branch: [v2.0.0]
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
@@ -35,7 +35,7 @@ jobs:
       run: |
         export HOME=${{ github.workspace }}
         export LDFLAGS="-static -static-libgcc -static-libstdc++ -s"
-        export CFLAGS=-"flto"
+        export CFLAGS="-flto"
         export CXXFLAGS="$CFLAGS"
         git clone --depth 1 -b ${{ matrix.branch }} https://github.com/fraunhoferhhi/vvdec
         cd vvdec
